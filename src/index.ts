@@ -8,6 +8,7 @@ app.use(express.json()) // phải parse thông tin người dùng gửi lên th�
 
 app.use('/users', usersRouter)
 
+// connect DB
 databaseService.connect()
 
 app.listen(port, () => {
