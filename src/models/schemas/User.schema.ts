@@ -9,16 +9,16 @@ interface UserType {
   password: string
   created_at?: Date
   updated_at?: Date
-  email_verify_token?: string // jwt hoặc '' nếu đã xác thực email
-  forgot_password_token?: string // jwt hoặc '' nếu đã xác thực email
+  email_verify_token?: string
+  forgot_password_token?: string
   verify?: UserVerifyStatus
 
-  bio?: string // optional
-  location?: string // optional
-  website?: string // optional
-  username?: string // optional
-  avatar?: string // optional
-  cover_photo?: string // optional
+  bio?: string
+  location?: string
+  website?: string
+  username?: string
+  avatar?: string
+  cover_photo?: string
 }
 
 export default class User {
@@ -29,16 +29,16 @@ export default class User {
   password: string
   created_at: Date
   updated_at: Date
-  email_verify_token: string // jwt hoặc '' nếu đã xác thực email
-  forgot_password_token: string // jwt hoặc '' nếu đã xác thực email
+  email_verify_token: string
+  forgot_password_token: string
   verify: UserVerifyStatus
 
-  bio: string // optional
-  location: string // optional
-  website: string // optional
-  username: string // optional
-  avatar: string // optional
-  cover_photo: string // optional
+  bio: string
+  location: string
+  website: string
+  username: string
+  avatar: string
+  cover_photo: string
 
   constructor(user: UserType) {
     const date = new Date()

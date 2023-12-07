@@ -23,21 +23,11 @@ export const registerController = async (
   res: Response,
   next: NextFunction
 ) => {
-  // const { email, password } = req.body
   // Không cần try catch nữa, có lớp wrapRequestHandler try catch ở ngoài cùng rồi
-  // try {
   // chia code ra dễ quản lý -> usersService
-  // const result = await usersService.register({ email, password })
   const result = await usersService.register(req.body)
   return res.json({
     message: USERS_MESSAGES.REGISTER_SUCCESS,
     result
   })
-  // } catch (error) {
-  // return res.status(400).json({
-  //   message: 'Register failed',
-  //   error
-  // })
-  // next(error)
-  // }
 }
