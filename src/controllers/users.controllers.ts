@@ -7,6 +7,7 @@ import User from '~/models/schemas/User.schema'
 import { USERS_MESSAGES } from '~/constants/messages'
 import databaseService from '~/services/database.services'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { UserVerifyStatus } from '~/constants/enum'
 
 export const loginController = async (req: Request, res: Response) => {
   // user từ usersmiddleware
@@ -63,4 +64,21 @@ export const emailVerifyTokenValidatorController = async (req: Request, res: Res
     message: USERS_MESSAGES.EMAIL_VERIFY_SUCCESS,
     result
   })
+}
+
+export const resendVerifyEmailController = async (req: Request, res: Response, next: NextFunction) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) })
+  if (!user) {
+    return res.status(HTTP_STATUS.NOT_FOUND).json({
+      message: USERS_MESSAGES.USER_NOT_FOUND
+    })
+  }
+  if (user.verify === UserVerifyStatus.Verified) {
+    return res.json({
+      message: USERS_MESSAGES.EMAIL_ALREADY_VERIFIED_BEFORE
+    })
+  }
+  const result = await usersService.resendVeriryEmail(user_id)
+  return res.json(result)
 }

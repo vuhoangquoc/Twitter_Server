@@ -97,19 +97,58 @@ class UsersService {
   }
 
   async verify_email(user_id: string) {
+    // tạo giá trị cập nhật
+    // mongoDB cập nhật giá trị
     const [token] = await Promise.all([
       this.signAccessAndRefreshToken(user_id),
       databaseService.users.updateOne(
         {
           _id: new ObjectId(user_id)
         },
-        { $set: { email_verify_token: '', verify: UserVerifyStatus.Verified, updated_at: new Date() } }
+        // {
+        //   $set: {
+        //     email_verify_token: '',
+        //     verify: UserVerifyStatus.Verified
+        //   },
+        //   $currentDate: {
+        //     updated_at: true
+        //   }
+        // }
+        [
+          {
+            $set: {
+              email_verify_token: '',
+              updated_at: '$$NOW',
+              verify: UserVerifyStatus.Verified
+            }
+          }
+        ]
       )
     ])
     const [access_token, refresh_token] = token
     return {
       access_token,
       refresh_token
+    }
+  }
+  async resendVeriryEmail(user_id: string) {
+    const email_verify_token = await this.signEmailVerifyToken(user_id)
+    // Gửi mail
+    console.log('Resend verify email: ', email_verify_token)
+    // Cập nhật lại giá trị email_verify_token trong document user
+    await databaseService.users.updateOne(
+      { _id: new ObjectId(user_id) },
+      {
+        $set: {
+          email_verify_token
+        },
+        $currentDate: {
+          updated_at: true
+        }
+      }
+    )
+    return {
+      message: USERS_MESSAGES.RESEND_VERIFY_EMAIL_SUCCESS
     }
   }
 }
