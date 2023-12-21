@@ -42,3 +42,7 @@ export interface UpdateMeReqBody {
 export interface GetProfileParams {
   username: string
 }
+
+export interface FollowReqBody {
+  followed_user_id: string
+}
