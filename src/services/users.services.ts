@@ -132,15 +132,6 @@ class UsersService {
         {
           _id: new ObjectId(user_id)
         },
-        // {
-        //   $set: {
-        //     email_verify_token: '',
-        //     verify: UserVerifyStatus.Verified
-        //   },
-        //   $currentDate: {
-        //     updated_at: true
-        //   }
-        // }
         [
           {
             $set: {
@@ -153,11 +144,15 @@ class UsersService {
       )
     ])
     const [access_token, refresh_token] = token
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token })
+    )
     return {
       access_token,
       refresh_token
     }
   }
+
   async resendVeriryEmail(user_id: string) {
     const email_verify_token = await this.signEmailVerifyToken({ user_id, verify: UserVerifyStatus.Unverified })
     // Gửi mail
@@ -321,6 +316,25 @@ class UsersService {
     })
     return {
       message: USERS_MESSAGES.UNFOLLOW_SUCCESS
+    }
+  }
+
+  async changePassword(user_id: string, new_password: string) {
+    await databaseService.users.updateOne(
+      {
+        _id: new ObjectId(user_id)
+      },
+      {
+        $set: {
+          password: hashPassword(new_password)
+        },
+        $currentDate: {
+          updated_at: true
+        }
+      }
+    )
+    return {
+      message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS
     }
   }
 }
