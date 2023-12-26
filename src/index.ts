@@ -4,11 +4,18 @@ import databaseService from './services/database.services'
 import { defaultErrorHandler } from './middlewares/error.middlewares'
 import mediasRouter from './routes/medias.routers'
 import { initFolder } from './utils/files'
+import { config } from 'dotenv'
+import { UPLOAD_DIR } from './constants/dir'
+
+config()
+
 // connect DB
 databaseService.connect()
 
 const app = express()
-const port = 4000
+const port = process.env.PORT || 4000
+
+console.log(process.argv)
 
 initFolder()
 
@@ -16,6 +23,7 @@ app.use(express.json()) // phải parse thông tin người dùng gửi lên th�
 
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
+app.use('/static', express.static(UPLOAD_DIR))
 
 // Tất cả lỗi sẽ chạy vào đây
 app.use(defaultErrorHandler)
