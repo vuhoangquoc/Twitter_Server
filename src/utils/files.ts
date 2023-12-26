@@ -1,11 +1,11 @@
 import fs from 'fs'
-import path, { resolve } from 'path'
-import formidable from 'formidable'
+import path from 'path'
+import formidable, { File } from 'formidable'
 import { Request } from 'express'
-import { reject } from 'lodash'
+import { UPLOAD_TEMP_DIR } from '~/constants/dir'
 
 export const initFolder = () => {
-  const uploadFolderPath = path.resolve('uploads')
+  const uploadFolderPath = UPLOAD_TEMP_DIR
   if (!fs.existsSync(uploadFolderPath)) {
     fs.mkdirSync(uploadFolderPath, {
       recursive: true // Mục đích là tạo folder nested
@@ -16,7 +16,7 @@ export const initFolder = () => {
 export const handleUploadSingleImage = async (req: Request) => {
   // const formidable = (await import("formidable")).default -- fix ES Module CommonJS khi dùng formidable v2
   const form = formidable({
-    uploadDir: path.resolve('uploads'),
+    uploadDir: UPLOAD_TEMP_DIR,
     maxFiles: 1,
     keepExtensions: true,
     maxFieldsSize: 300 * 1024, // 300kb
@@ -29,7 +29,7 @@ export const handleUploadSingleImage = async (req: Request) => {
       return valid
     }
   })
-  return new Promise((resolve, reject) => {
+  return new Promise<File>((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) {
         return reject(err)
@@ -38,7 +38,13 @@ export const handleUploadSingleImage = async (req: Request) => {
       if (!Boolean(files.image)) {
         return reject(new Error('File is empty'))
       }
-      resolve(files)
+      resolve((files.image as File[])[0])
     })
   })
+}
+
+export const getNameFromFullname = (fullname: string) => {
+  const nameArr = fullname.split('.')
+  nameArr.pop()
+  return nameArr.join('')
 }
