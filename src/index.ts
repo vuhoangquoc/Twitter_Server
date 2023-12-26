@@ -5,6 +5,7 @@ import { defaultErrorHandler } from './middlewares/error.middlewares'
 import mediasRouter from './routes/medias.routers'
 import { initFolder } from './utils/files'
 import { config } from 'dotenv'
+import { UPLOAD_DIR } from './constants/dir'
 
 config()
 
@@ -22,6 +23,7 @@ app.use(express.json()) // phải parse thông tin người dùng gửi lên th�
 
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
+app.use('/static', express.static(UPLOAD_DIR))
 
 // Tất cả lỗi sẽ chạy vào đây
 app.use(defaultErrorHandler)
