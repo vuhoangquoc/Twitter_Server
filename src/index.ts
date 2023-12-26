@@ -4,11 +4,17 @@ import databaseService from './services/database.services'
 import { defaultErrorHandler } from './middlewares/error.middlewares'
 import mediasRouter from './routes/medias.routers'
 import { initFolder } from './utils/files'
+import { config } from 'dotenv'
+
+config()
+
 // connect DB
 databaseService.connect()
 
 const app = express()
-const port = 4000
+const port = process.env.PORT || 4000
+
+console.log(process.argv)
 
 initFolder()
 
