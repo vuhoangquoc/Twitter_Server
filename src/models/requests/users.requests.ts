@@ -1,6 +1,7 @@
 import { JwtPayload } from 'jsonwebtoken'
-import { TokenType } from '~/constants/enum'
+import { TokenType, UserVerifyStatus } from '~/constants/enum'
 import { ParamsDictionary } from 'express-serve-static-core'
+import RefreshToken from '../schemas/RefreshToken.schema'
 
 export interface RegisterReqBody {
   name: string
@@ -14,6 +15,10 @@ export interface LogoutReqBody {
   refresh_token: string
 }
 
+export interface RefreshTokenReqBody {
+  refresh_token: string
+}
+
 export interface ForgotPasswordReqBody {
   email: string
 }
@@ -21,6 +26,7 @@ export interface ForgotPasswordReqBody {
 export interface TokenPayload extends JwtPayload {
   user_id: string
   token_type: TokenType
+  verify: UserVerifyStatus
 }
 
 export interface ResetPasswordReqBody {
